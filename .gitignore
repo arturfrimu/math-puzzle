@@ -24,3 +24,5 @@ yarn-error.log*
 
 Project_Default.xml
 vcs.xml
+.idea
+package-lock.json
