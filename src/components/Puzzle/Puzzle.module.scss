@@ -1,0 +1,41 @@
+.puzzle-sectino {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+
+  .puzzle {
+    width: 40rem;
+    height: 60rem;
+
+    &__board {
+      width: 40rem;
+      height: 40rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #6d6875;
+      border: 5px solid #f0e6ef;
+
+      span {
+        font-size: 4rem;
+        color: #f0e6ef;
+      }
+    }
+
+    &__answers {
+      margin-top: 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
+
+    &__answer {
+      flex: 0.5;
+      padding: 1rem 0;
+      background-color: #6d6875;
+      color: #f0e6ef;
+      font-size: 1.6rem;
+    }
+  }
+}
