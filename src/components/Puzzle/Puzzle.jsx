@@ -1,5 +1,8 @@
 import React, {useState} from "react";
 import classes from "./Puzzle.module.scss";
+import ApplauseAudio from '../../assets/sounds/applause.mp3'
+import WrongAudio from '../../assets/sounds/wrong.mp3'
+
 
 const interval = {min: 2, max: 10}
 
@@ -30,11 +33,19 @@ const Puzzle = () => {
         } else if (randomOperator === "-") {
             return nums.x - nums.y;
         }
+    }
 
+    const playAudio = () => {
+        if (wrongAnswer) {
+            return new Audio(WrongAudio)
+        } else {
+            return new Audio(ApplauseAudio)
+        }
     }
 
     const checkAnswer = () => {
         if (+answer === doAction()) {
+            new Audio(ApplauseAudio).play()
             const x = randomIntFromInterval(interval);
             setNums({x, y: randomIntFromInterval({...interval, max: x})})
             setWrongAnswer(false)
@@ -42,9 +53,13 @@ const Puzzle = () => {
             setEquations(prev => prev + 1)
             localStorage.setItem('equations', JSON.stringify(equations + 1))
         } else {
+            new Audio(WrongAudio).play()
             console.error('Wrong answer!!!')
             setWrongAnswer(true)
+            setEquations(prev => prev - 1)
+            localStorage.setItem('equations', JSON.stringify(equations - 1))
         }
+        // playAudio().play()
         setAnswer("")
     }
 
