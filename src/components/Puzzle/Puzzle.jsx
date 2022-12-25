@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import classes from "./Puzzle.module.scss";
 import ApplauseAudio from '../../assets/sounds/applause.mp3'
 import WrongAudio from '../../assets/sounds/wrong.mp3'
@@ -6,11 +6,17 @@ import WrongAudio from '../../assets/sounds/wrong.mp3'
 import firework1 from '../../assets/gif/firework1.gif'
 import firework2 from '../../assets/gif/firework2.gif'
 
-const interval = {min: 2, max: 10}
+import Lottie from 'react-lottie';
+import lottieGif from '../../assets/gif/data.json'
+import wrongGif from '../../assets/gif/wrong.json'
+
+const interval = {min: 4, max: 10}
 
 const randomIntFromInterval = ({min, max}) => {
     return Math.floor(Math.random() * (max - min + 1) + min)
 }
+
+const gifState = {success: 'success', wrong: 'wrong', none: 'none'}
 
 const operators = ["+", "-"]
 const x = randomIntFromInterval(interval);
@@ -24,7 +30,25 @@ const Puzzle = () => {
         max: operators.length - 1
     })])
     const [equations, setEquations] = useState(JSON.parse(localStorage.getItem('equations')) || 0)
-    const [gif, setGif] = useState(false)
+    const [gif, setGif] = useState(gifState.none)
+
+    const defaultOptions = {
+        loop: false,
+        autoplay: true,
+        animationData: lottieGif,
+        rendererSettings: {
+            preserveAspectRatio: 'xMidYMid slice'
+        }
+    };
+
+    const defaultOptionsWrongText = {
+        loop: false,
+        autoplay: true,
+        animationData: wrongGif,
+        rendererSettings: {
+            preserveAspectRatio: 'xMidYMid slice'
+        }
+    };
 
     const generateEq = () => {
         return `${nums.x} ${randomOperator} ${nums.y} = ${answer ? answer : "?"}`
@@ -52,16 +76,25 @@ const Puzzle = () => {
             setEquations(prev => prev + 1)
             localStorage.setItem('equations', JSON.stringify(equations + 1))
 
-            setGif(true)
-            setTimeout(() => setGif(false), 5000)
+            setGif(gifState.success)
         } else {
             playAudio(WrongAudio)
             setWrongAnswer(true)
             setEquations(prev => prev - 1)
             localStorage.setItem('equations', JSON.stringify(equations - 1))
+
+            setGif(gifState.wrong)
         }
         setAnswer("")
     }
+
+    useEffect(() => {
+        const time = setTimeout(() => {
+            setGif(gifState.none)
+        }, 5000)
+
+        return () => clearTimeout(time)
+    }, [gif])
 
     const submitHandler = (e) => {
         e.preventDefault()
@@ -72,18 +105,23 @@ const Puzzle = () => {
 
     return (
         <section className={classes["puzzle-sectino"]}>
-            {gif && <img src={firework1} alt=""/>}
-            <div className={classes.puzzle}>
-                <div className={classes.puzzle__board}>
-                    <div className={classes.puzzle__equations}>Exercitii rezolvate: {equations}</div>
-                    <span>{generateEq()}</span>
+            {gif === 'wrong' && <Lottie options={defaultOptionsWrongText} height={300} width={300}/>}
+            <div style={{display: 'flex'}}>
+                {gif === 'wrong' && <Lottie options={defaultOptions} height={400} width={400}/>}
+                {gif === 'success' && <img src={firework1} alt=""/>}
+                <div className={classes.puzzle}>
+                    <div className={classes.puzzle__board}>
+                        <div className={classes.puzzle__equations}>Exercitii rezolvate: {equations}</div>
+                        <span>{generateEq()}</span>
+                    </div>
+                    <form className={classes.puzzle__answer} onSubmit={submitHandler}>
+                        <input type="number" onChange={e => setAnswer(e.target.value)} value={answer}
+                               className={errorClass} placeholder={wrongAnswer ? "Raspuns gresit" : ""}/>
+                    </form>
                 </div>
-                <form className={classes.puzzle__answer} onSubmit={submitHandler}>
-                    <input type="number" onChange={e => setAnswer(e.target.value)} value={answer}
-                           className={errorClass} placeholder={wrongAnswer ? "Raspuns gresit" : ""}/>
-                </form>
+                {gif === 'success' && <img src={firework2} alt=""/>}
+                {gif === 'wrong' && <Lottie options={defaultOptions} height={400} width={400}/>}
             </div>
-            {gif && <img src={firework2} alt=""/>}
         </section>
     );
 };
