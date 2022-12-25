@@ -16,6 +16,7 @@
       align-items: center;
       background-color: #6d6875;
       border: 5px solid #f0e6ef;
+      position: relative;
 
       span {
         font-size: 4rem;
@@ -23,19 +24,29 @@
       }
     }
 
-    &__answers {
-      margin-top: 2rem;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 2rem;
+    &__equations {
+      position: absolute;
+      top: 2rem;
+      right: 2rem;
+      font-size: 2rem;
+      color: #fff;
     }
 
     &__answer {
-      flex: 0.5;
-      padding: 1rem 0;
-      background-color: #6d6875;
-      color: #f0e6ef;
-      font-size: 1.6rem;
+      margin-top: 2rem;
+
+      input {
+        width: 100%;
+        padding: 1rem;
+
+        &.incorrect {
+          border: 1px solid #f00;
+
+          &::placeholder {
+            color: #f00;
+          }
+        }
+      }
     }
   }
 }
