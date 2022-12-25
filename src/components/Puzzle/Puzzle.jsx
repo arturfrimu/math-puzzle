@@ -3,6 +3,8 @@ import classes from "./Puzzle.module.scss";
 import ApplauseAudio from '../../assets/sounds/applause.mp3'
 import WrongAudio from '../../assets/sounds/wrong.mp3'
 
+import firework1 from '../../assets/gif/firework1.gif'
+import firework2 from '../../assets/gif/firework2.gif'
 
 const interval = {min: 2, max: 10}
 
@@ -22,6 +24,7 @@ const Puzzle = () => {
         max: operators.length - 1
     })])
     const [equations, setEquations] = useState(JSON.parse(localStorage.getItem('equations')) || 0)
+    const [gif, setGif] = useState(false)
 
     const generateEq = () => {
         return `${nums.x} ${randomOperator} ${nums.y} = ${answer ? answer : "?"}`
@@ -35,31 +38,28 @@ const Puzzle = () => {
         }
     }
 
-    const playAudio = () => {
-        if (wrongAnswer) {
-            return new Audio(WrongAudio)
-        } else {
-            return new Audio(ApplauseAudio)
-        }
+    const playAudio = (audio) => {
+        new Audio(audio).play()
     }
 
     const checkAnswer = () => {
         if (+answer === doAction()) {
-            new Audio(ApplauseAudio).play()
+            playAudio(ApplauseAudio)
             const x = randomIntFromInterval(interval);
             setNums({x, y: randomIntFromInterval({...interval, max: x})})
             setWrongAnswer(false)
             setRandomOperator(operators[randomIntFromInterval({min: 0, max: operators.length - 1})])
             setEquations(prev => prev + 1)
             localStorage.setItem('equations', JSON.stringify(equations + 1))
+
+            setGif(true)
+            setTimeout(() => setGif(false), 5000)
         } else {
-            new Audio(WrongAudio).play()
-            console.error('Wrong answer!!!')
+            playAudio(WrongAudio)
             setWrongAnswer(true)
             setEquations(prev => prev - 1)
             localStorage.setItem('equations', JSON.stringify(equations - 1))
         }
-        // playAudio().play()
         setAnswer("")
     }
 
@@ -72,6 +72,7 @@ const Puzzle = () => {
 
     return (
         <section className={classes["puzzle-sectino"]}>
+            {gif && <img src={firework1} alt=""/>}
             <div className={classes.puzzle}>
                 <div className={classes.puzzle__board}>
                     <div className={classes.puzzle__equations}>Exercitii rezolvate: {equations}</div>
@@ -82,6 +83,7 @@ const Puzzle = () => {
                            className={errorClass} placeholder={wrongAnswer ? "Raspuns gresit" : ""}/>
                 </form>
             </div>
+            {gif && <img src={firework2} alt=""/>}
         </section>
     );
 };
