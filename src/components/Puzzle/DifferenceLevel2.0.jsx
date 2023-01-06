@@ -10,19 +10,19 @@ import Lottie from 'react-lottie';
 import lottieGif from '../../assets/gif/data.json'
 import wrongGif from '../../assets/gif/wrong.json'
 
-const interval = {min: 4, max: 10}
+const interval = {min: 3, max: 10}
 
-const randomIntFromInterval = ({min, max}) => {
-    return Math.floor(Math.random() * (max - min + 1) + min)
-}
+const randomIntFromInterval = ({min, max}) => Math.floor(Math.random() * (max - min + 1) + min)
 
 const gifState = {success: 'success', wrong: 'wrong', none: 'none'}
 
-const operators = ["+", "-"]
-const x = randomIntFromInterval(interval);
+const operators = ["-"]
+
+const descazut = randomIntFromInterval(interval);
+const diferenta = randomIntFromInterval({...interval, max: descazut})
 
 const Puzzle = () => {
-    const [nums, setNums] = useState({x, y: randomIntFromInterval({...interval, max: x})})
+    const [nums, setNums] = useState({descazut, diferenta})
     const [answer, setAnswer] = useState("")
     const [wrongAnswer, setWrongAnswer] = useState(false)
     const [randomOperator, setRandomOperator] = useState(operators[randomIntFromInterval({
@@ -50,27 +50,21 @@ const Puzzle = () => {
         }
     };
 
-    const generateEq = () => {
-        return `${nums.descazut} ${randomOperator} ${nums.y} = ${answer ? answer : "?"}`
-    }
+    const generateEq = () => `${nums.descazut} ${randomOperator} ${answer ? answer : "?"} = ${nums.diferenta}`
 
-    function doAction() {
-        if (randomOperator === "+") {
-            return nums.descazut + nums.y;
-        } else if (randomOperator === "-") {
-            return nums.descazut - nums.y;
-        }
-    }
+    const doAction = () => {
+        console.log("diferenta: " + diferenta)
+        console.log("descazut: " + descazut)
+        return nums.descazut - nums.diferenta;
+    };
 
-    const playAudio = (audio) => {
-        new Audio(audio).play()
-    }
+    const playAudio = (audio) => new Audio(audio).play()
 
     const checkAnswer = () => {
         if (+answer === doAction()) {
             playAudio(ApplauseAudio)
-            const x = randomIntFromInterval(interval);
-            setNums({x, diferenta: randomIntFromInterval({...interval, max: x})})
+            const descazut = randomIntFromInterval(interval);
+            setNums({descazut, diferenta: randomIntFromInterval({...interval, max: descazut})})
             setWrongAnswer(false)
             setRandomOperator(operators[randomIntFromInterval({min: 0, max: operators.length - 1})])
             setEquations(prev => prev + 1)

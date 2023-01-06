@@ -1,8 +1,11 @@
 import React from "react";
-import Puzzle from "./components/Puzzle/Puzzle";
+import DifferenceLevel20 from "./components/Puzzle/DifferenceLevel2.0";
 
 const App = () => {
-  return <Puzzle />;
+    return (
+        <DifferenceLevel20/>
+        // <Puzzle/>
+    );
 };
 
 export default App;
